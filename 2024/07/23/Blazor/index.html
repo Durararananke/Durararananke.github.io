@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <meta name="author" content="DuRaRaRa">
+
+
+
+
+
+<title>[Parameter] in Blazor | Possession</title>
+
+
+
+<link rel="icon" href="/favicon.svg">
+
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/nprogress/nprogress.css">
+
+
+
+<script src="/lib/jquery.min.js"></script>
+
+
+<script src="/lib/iconify-icon.min.js"></script>
+
+
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+  };
+</script>
+
+
+<script src="/lib/nprogress/nprogress.js"></script>
+
+<script>
+  $(document).ready(() => {
+    NProgress.configure({
+      showSpinner: false,
+    });
+    NProgress.start();
+    $("#nprogress .bar").css({
+      background: "#de7441",
+    });
+    $("#nprogress .peg").css({
+      "box-shadow": "0 0 2px #de7441, 0 0 4px #de7441",
+    });
+    $("#nprogress .spinner-icon").css({
+      "border-top-color": "#de7441",
+      "border-left-color": "#de7441",
+    });
+    setTimeout(function () {
+      NProgress.done();
+      $(".fade").removeClass("out");
+    }, 800);
+  });
+</script>
+
+<script>
+  (function () {
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+    if (setting === "dark" || (prefersDark && setting !== "light"))
+      document.documentElement.classList.toggle("dark", true);
+    let isDark = document.documentElement.classList.contains("dark");
+  })();
+
+  $(document).ready(function () {
+    // init icon
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark = document.documentElement.classList.contains("dark");
+    $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
+
+    function toggleGiscusTheme() {
+      const isDark = document.documentElement.classList.contains("dark");
+      const giscusFrame = document.querySelector("iframe.giscus-frame");
+      if (giscusFrame) {
+        giscusFrame.contentWindow.postMessage(
+          {
+            giscus: {
+              setConfig: {
+                theme: isDark ? "dark" : "light",
+              },
+            },
+          },
+          "https://giscus.app"
+        );
+      }
+    }
+
+
+    // toggle dark mode
+    function toggleDark() {
+      let isDark = document.documentElement.classList.contains("dark");
+      const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+      isDark = !isDark;
+      document.documentElement.classList.toggle("dark", isDark);
+      $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
+      if (prefersDark === isDark) {
+        localStorage.setItem("hexo-color-scheme", "auto");
+      } else {
+        localStorage.setItem("hexo-color-scheme", isDark ? "dark" : "light");
+      }
+      toggleGiscusTheme();
+    }
+    $("#toggle-dark").click(toggleDark);
+
+    // listen dark mode change
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (e) => {
+        const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+        if (setting === "auto") {
+          document.documentElement.classList.toggle("dark", e.matches);
+          $("#theme-icon").attr(
+            "icon",
+            e.matches ? "ri:moon-line" : "ri:sun-line"
+          );
+          toggleGiscusTheme();
+        }
+      });
+  });
+</script>
+
+
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<body class="font-sans bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-200 relative">
+  <header class="fixed w-full px-5 py-1 z-10 backdrop-blur-xl backdrop-saturate-150 border-b border-black/5">
+  <div class="max-auto">
+    <nav class="flex items-center text-base">
+      <a href="/" class="group">
+        <h2 class="font-medium tracking-tighterp text-l p-2">
+          <img class="w-5 mr-2 inline-block transition-transform group-hover:rotate-[30deg]" id="logo" src="/images/logo.svg" alt="Possession" />
+          Possession
+        </h2>
+      </a>
+      <div id="header-title" class="opacity-0 md:ml-2 md:mt-[0.1rem] text-xs font-medium whitespace-nowrap overflow-hidden overflow-ellipsis">
+        [Parameter] in Blazor
+      </div>
+      <div class="flex-1"></div>
+      <div class="flex items-center gap-3">
+        
+          <a class="hidden sm:flex" href="/archives">Posts</a>
+        
+          <a class="hidden sm:flex" href="/category">Categories</a>
+        
+          <a class="hidden sm:flex" href="/tag">Tags</a>
+        
+        
+          
+            <a class="w-5 h-5 hidden sm:flex" title="Github" target="_blank" rel="noopener" href="https://github.com/Durararananke/Durararananke.github.io">
+              <iconify-icon width="20" icon="ri:github-line"></iconify-icon>
+            </a>
+          
+        
+        <a class="w-5 h-5 hidden sm:flex" title="Github" href="rss2.xml">
+          <iconify-icon width="20" icon="ri:rss-line"></iconify-icon>
+        </a>
+        <a class="w-5 h-5" title="toggle theme" id="toggle-dark">
+          <iconify-icon width="20" icon="" id="theme-icon"></iconify-icon>
+        </a>
+      </div>
+      <div class="flex items-center justify-center gap-3 ml-3 sm:hidden">
+        <span class="w-5 h-5" aria-hidden="true" role="img" id="open-menu">
+          <iconify-icon width="20" icon="carbon:menu" ></iconify-icon>
+        </span>
+        <span class="w-5 h-5 hidden" aria-hidden="true" role="img" id="close-menu">
+          <iconify-icon  width="20" icon="carbon:close" ></iconify-icon>
+        </span>
+      </div>
+    </nav>
+  </div>
+</header>
+<div id="menu-panel" class="h-0 overflow-hidden sm:hidden fixed left-0 right-0 top-12 bottom-0 z-10">
+  <div id="menu-content" class="relative z-20 bg-white/80 px-6 sm:px-8 py-2 backdrop-blur-xl -translate-y-full transition-transform duration-300">
+    <ul class="nav flex flex-col sm:flex-row text-sm font-medium">
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/archives" class="flex h-12 sm:h-auto items-center">Posts</a>
+        </li>
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/category" class="flex h-12 sm:h-auto items-center">Categories</a>
+        </li>
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/tag" class="flex h-12 sm:h-auto items-center">Tags</a>
+        </li>
+      
+    </ul>
+  </div>
+  <div class="mask bg-black/20 absolute inset-0"></div>
+</div>
+
+  <main class="pt-14">
+    <!-- css -->
+
+<link rel="stylesheet" href="/lib/fancybox/fancybox.min.css">
+
+
+<link rel="stylesheet" href="/lib/tocbot/tocbot.min.css">
+
+<!-- toc -->
+
+  <!-- tocbot -->
+<nav class="post-toc toc text-sm w-48 relative top-32 right-0 opacity-70 hidden lg:block" style="position: fixed !important;"></nav>
+
+
+<section class="px-6 max-w-prose mx-auto md:px-0">
+  <!-- header -->
+  <header class="overflow-hidden pt-6 pb-6 md:pt-12">
+    <div class="pt-4 md:pt-6">
+      <h1 id="article-title" class="text-[2rem] font-bold leading-snug mb-4 md:mb-6 md:text-[2.6rem]">
+        [Parameter] in Blazor
+      </h1>
+      <div>
+        <section class="flex items-center gap-3 text-sm">
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="carbon-calendar" ></iconify-icon>
+            <time>2024-07-23</time>
+          </span>
+          <span class="text-gray-400">·</span>
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="ic:round-access-alarm" ></iconify-icon>
+            <span>5 min</span>
+          </span>
+          <span class="text-gray-400">·</span>
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="icon-park-outline:font-search" ></iconify-icon>
+            <span>1.4k words</span>
+          </span>
+          
+            <span class="text-gray-400">·</span>
+            <span class="flex items-center gap-1">
+              <iconify-icon width="16" icon="icon-park-outline:box" class="mr-2"></iconify-icon>
+              <a class="article-category-link" href="/categories/Web/">Web</a>
+            </span>
+          
+        </section>
+      </div>
+    </div>
+  </header>
+  <!-- content -->
+  <article class="post-content prose m-auto slide-enter-content dark:prose-invert">
+    <h2 id="1-使用-Parameter-和EventCallback保持子组件与父组件数据状态始终保持一致"><a href="#1-使用-Parameter-和EventCallback保持子组件与父组件数据状态始终保持一致" class="headerlink" title="1.使用[Parameter]和EventCallback保持子组件与父组件数据状态始终保持一致"></a>1.使用[Parameter]和EventCallback保持子组件与父组件数据状态始终保持一致</h2><h3 id="子组件更新-SelectedAvatar"><a href="#子组件更新-SelectedAvatar" class="headerlink" title="子组件更新 SelectedAvatar"></a>子组件更新 <code>SelectedAvatar</code></h3><p>当子组件调用 <code>SelectAvatar</code> 方法时，它会更新自己的 <code>SelectedAvatar</code> 属性并触发 <code>OnAvatarSelected</code> 回调：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">async</span> Task <span class="title">SelectAvatar</span>(<span class="params"><span class="built_in">string</span> avatarUrl</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    SelectedAvatar = avatarUrl;</span><br><span class="line">    <span class="keyword">await</span> OnAvatarSelected.InvokeAsync(avatarUrl);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="父组件处理事件回调"><a href="#父组件处理事件回调" class="headerlink" title="父组件处理事件回调"></a>父组件处理事件回调</h3><p>父组件通过 <code>HandleAvatarSelected</code> 方法处理来自子组件的事件回调，并更新自己的 <code>currentAvatar</code>：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">HandleAvatarSelected</span>(<span class="params"><span class="built_in">string</span> avatarUrl</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    currentAvatar = avatarUrl;</span><br><span class="line">    Console.WriteLine(<span class="string">$&quot;Selected avatar: <span class="subst">&#123;avatarUrl&#125;</span>&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="为什么父组件需要更新状态？"><a href="#为什么父组件需要更新状态？" class="headerlink" title="为什么父组件需要更新状态？"></a>为什么父组件需要更新状态？</h3><ol>
+<li><p><strong>状态同步</strong>：<br>父组件的 <code>currentAvatar</code> 需要与子组件的 <code>SelectedAvatar</code> 保持同步，以确保整个应用程序的状态是一致的。如果父组件的状态不更新，那么它与子组件之间的状态可能会不一致，导致潜在的显示或逻辑问题。</p>
+</li>
+<li><p><strong>双向绑定</strong>：<br>当父组件更新 <code>currentAvatar</code> 后，这个新值会通过参数传递再次绑定到子组件的 <code>SelectedAvatar</code>。这确保了如果有其他机制改变了父组件的 <code>currentAvatar</code>，子组件也能同步更新。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;AvatarSelector SelectedAvatar=&quot;currentAvatar&quot; OnAvatarSelected=&quot;HandleAvatarSelected&quot; /&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>外部依赖</strong>：<br>父组件可能依赖于 <code>currentAvatar</code> 进行其他逻辑处理或显示。更新父组件的状态可以确保所有依赖 <code>currentAvatar</code> 的逻辑都能够正确地执行。例如：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">HandleAvatarSelected</span>(<span class="params"><span class="built_in">string</span> avatarUrl</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    currentAvatar = avatarUrl;</span><br><span class="line">    <span class="comment">// 其他逻辑，如保存选择到数据库、更新UI等</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="简化理解"><a href="#简化理解" class="headerlink" title="简化理解"></a>简化理解</h3><p>考虑以下简化的示例：</p>
+<h4 id="子组件-AvatarSelector-razor"><a href="#子组件-AvatarSelector-razor" class="headerlink" title="子组件 (AvatarSelector.razor)"></a>子组件 (<code>AvatarSelector.razor</code>)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;avatar-selector&quot;&gt;</span><br><span class="line">    @foreach (var avatar in AvatarPresets.Avatars)</span><br><span class="line">    &#123;</span><br><span class="line">        &lt;img src=&quot;@avatar&quot; alt=&quot;Avatar option&quot; @onclick=&quot;() =&gt; SelectAvatar(avatar)&quot; </span><br><span class="line">             class=&quot;@(SelectedAvatar == avatar ? &quot;selected&quot; : &quot;&quot;)&quot;</span><br><span class="line">             style=&quot;width: 50px; height: 50px; margin: 5px; cursor: pointer;&quot; /&gt;</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">@code &#123;</span><br><span class="line">    [Parameter] public EventCallback&lt;string&gt; OnAvatarSelected &#123; get; set; &#125;</span><br><span class="line">    [Parameter] public string SelectedAvatar &#123; get; set; &#125;</span><br><span class="line"></span><br><span class="line">    private async Task SelectAvatar(string avatarUrl)</span><br><span class="line">    &#123;</span><br><span class="line">        SelectedAvatar = avatarUrl;</span><br><span class="line">        await OnAvatarSelected.InvokeAsync(avatarUrl);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="父组件-ParentComponent-razor"><a href="#父组件-ParentComponent-razor" class="headerlink" title="父组件 (ParentComponent.razor)"></a>父组件 (<code>ParentComponent.razor</code>)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@page &quot;/parent&quot;</span><br><span class="line">@code &#123;</span><br><span class="line">    private string currentAvatar = &quot;https://example.com/avatar1.png&quot;;</span><br><span class="line"></span><br><span class="line">    private void HandleAvatarSelected(string avatarUrl)</span><br><span class="line">    &#123;</span><br><span class="line">        currentAvatar = avatarUrl;</span><br><span class="line">        Console.WriteLine($&quot;Selected avatar: &#123;avatarUrl&#125;&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&lt;AvatarSelector SelectedAvatar=&quot;currentAvatar&quot; OnAvatarSelected=&quot;HandleAvatarSelected&quot; /&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在这个流程中：</p>
+<ol>
+<li>子组件在 <code>SelectAvatar</code> 方法中更新 <code>SelectedAvatar</code> 并通知父组件。</li>
+<li>父组件在 <code>HandleAvatarSelected</code> 方法中更新 <code>currentAvatar</code>。</li>
+<li>更新后的 <code>currentAvatar</code> 通过绑定再次传递给子组件的 <code>SelectedAvatar</code>。</li>
+</ol>
+<p>通过这种方式，可以确保父组件和子组件之间的数据状态始终保持一致，并且父组件可以依赖更新后的状态执行其他逻辑。</p>
+<h2 id="2-Parameter-、EventCallback、-CascadingParameter-、-SupplyParameterFromQuery-和-SupplyParameterFromForm"><a href="#2-Parameter-、EventCallback、-CascadingParameter-、-SupplyParameterFromQuery-和-SupplyParameterFromForm" class="headerlink" title="2.[Parameter]、EventCallback、[CascadingParameter]、[SupplyParameterFromQuery] 和 [SupplyParameterFromForm]"></a>2.[Parameter]、EventCallback、[CascadingParameter]、[SupplyParameterFromQuery] 和 [SupplyParameterFromForm]</h2><p>在Blazor中，参数是组件之间传递数据和事件的主要方式。</p>
+<h3 id="Parameter-和-EventCallback"><a href="#Parameter-和-EventCallback" class="headerlink" title="[Parameter] 和 EventCallback"></a><code>[Parameter]</code> 和 <code>EventCallback</code></h3><h4 id="Parameter"><a href="#Parameter" class="headerlink" title="[Parameter]"></a><code>[Parameter]</code></h4><ul>
+<li><p><strong>功能</strong>: 从父组件向子组件传递数据。</p>
+</li>
+<li><p><strong>使用</strong>: 在子组件中使用 <code>[Parameter]</code> 特性标记属性。</p>
+</li>
+<li><p><strong>示例</strong>:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Parameter</span>] <span class="keyword">public</span> <span class="built_in">string</span> SelectedAvatar &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="EventCallback"><a href="#EventCallback" class="headerlink" title="EventCallback"></a><code>EventCallback</code></h4><ul>
+<li><p><strong>功能</strong>: 从子组件向父组件发送事件通知，并传递相关数据。</p>
+</li>
+<li><p><strong>使用</strong>: 在子组件中使用 <code>[Parameter]</code> 特性标记 <code>EventCallback</code> 属性。</p>
+</li>
+<li><p><strong>示例</strong>:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Parameter</span>] <span class="keyword">public</span> EventCallback&lt;<span class="built_in">string</span>&gt; OnAvatarSelected &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="CascadingParameter"><a href="#CascadingParameter" class="headerlink" title="[CascadingParameter]"></a><code>[CascadingParameter]</code></h3><h4 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h4><p><code>[CascadingParameter]</code> 用于从祖先组件向任意深度的子孙组件传递数据。这种方式适用于需要在组件树的不同层次间共享数据的场景，比如主题、语言设置、认证状态等。</p>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><ol>
+<li><p><strong>在祖先组件中提供数据</strong>：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@code &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">string</span> currentTheme = <span class="string">&quot;dark&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&lt;CascadingValue Value=<span class="string">&quot;currentTheme&quot;</span>&gt;</span><br><span class="line">    &lt;ChildComponent /&gt;</span><br><span class="line">&lt;/CascadingValue&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>CascadingValue</code> 组件用于提供级联值。</li>
+</ul>
+</li>
+<li><p><strong>在子孙组件中接收数据</strong>：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@code &#123;</span><br><span class="line">    [<span class="meta">CascadingParameter</span>] <span class="keyword">public</span> <span class="built_in">string</span> Theme &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用 <code>[CascadingParameter]</code> 特性标记接收参数。</li>
+</ul>
+</li>
+</ol>
+<h3 id="SupplyParameterFromQuery"><a href="#SupplyParameterFromQuery" class="headerlink" title="[SupplyParameterFromQuery]"></a><code>[SupplyParameterFromQuery]</code></h3><h4 id="作用-1"><a href="#作用-1" class="headerlink" title="作用"></a>作用</h4><p><code>[SupplyParameterFromQuery]</code> 用于从URL查询字符串中获取参数值，并将其传递给组件。这对于根据URL参数动态调整组件行为非常有用，比如分页、筛选等。</p>
+<h4 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h4><ol>
+<li><p><strong>在组件中标记属性</strong>：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Parameter</span>]</span><br><span class="line">[<span class="meta">SupplyParameterFromQuery(Name = <span class="string">&quot;page&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="built_in">int</span> PageNumber &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>Name</code> 指定查询字符串参数的名称。</li>
+</ul>
+</li>
+<li><p><strong>在导航时包含查询参数</strong>：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/products?page=2&quot;</span>&gt;</span>Page 2<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="SupplyParameterFromForm"><a href="#SupplyParameterFromForm" class="headerlink" title="[SupplyParameterFromForm]"></a><code>[SupplyParameterFromForm]</code></h3><h4 id="作用-2"><a href="#作用-2" class="headerlink" title="作用"></a>作用</h4><p><code>[SupplyParameterFromForm]</code> 用于从表单数据中获取参数值，并将其传递给组件。这对于处理表单提交时的数据绑定非常有用。</p>
+<h4 id="使用-2"><a href="#使用-2" class="headerlink" title="使用"></a>使用</h4><ol>
+<li><p><strong>在组件中标记属性</strong>：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Parameter</span>]</span><br><span class="line">[<span class="meta">SupplyParameterFromForm</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="built_in">string</span> UserName &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>标记接收来自表单的参数。</li>
+</ul>
+</li>
+<li><p><strong>在表单提交时传递数据</strong>：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">EditForm</span> <span class="attr">Model</span>=<span class="string">&quot;@this&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">InputText</span> @<span class="attr">bind-Value</span>=<span class="string">&quot;UserName&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span>&gt;</span>Submit<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">EditForm</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="区别与联系"><a href="#区别与联系" class="headerlink" title="区别与联系"></a>区别与联系</h3><ol>
+<li><p><strong>数据传递范围</strong>:</p>
+<ul>
+<li><code>[Parameter]</code> 和 <code>EventCallback</code>: 直接父子组件之间的数据传递和事件通知。</li>
+<li><code>[CascadingParameter]</code>: 祖先组件向任意深度的子孙组件传递数据。</li>
+<li><code>[SupplyParameterFromQuery]</code>: 从URL查询字符串向组件传递数据。</li>
+<li><code>[SupplyParameterFromForm]</code>: 从表单提交的数据向组件传递数据。</li>
+</ul>
+</li>
+<li><p><strong>使用场景</strong>:</p>
+<ul>
+<li><code>[Parameter]</code>: 适用于简单的父子组件数据传递。</li>
+<li><code>EventCallback</code>: 适用于子组件向父组件发送事件通知。</li>
+<li><code>[CascadingParameter]</code>: 适用于跨层级共享数据，比如全局设置、上下文等。</li>
+<li><code>[SupplyParameterFromQuery]</code>: 适用于基于URL参数动态调整组件状态。</li>
+<li><code>[SupplyParameterFromForm]</code>: 适用于处理表单提交的数据绑定。</li>
+</ul>
+</li>
+<li><p><strong>配置和声明</strong>:</p>
+<ul>
+<li><code>[Parameter]</code> 和 <code>EventCallback</code>: 在组件内部直接声明。</li>
+<li><code>[CascadingParameter]</code>: 在祖先组件中使用 <code>CascadingValue</code> 提供值，子组件中使用 <code>[CascadingParameter]</code> 接收值。</li>
+<li><code>[SupplyParameterFromQuery]</code>: 通过URL查询字符串传递值。</li>
+<li><code>[SupplyParameterFromForm]</code>: 通过表单提交传递值。</li>
+</ul>
+</li>
+</ol>
+<p>这些参数传递方式使得Blazor组件之间的数据通信变得灵活多样，适用于不同的应用场景。</p>
+
+  </article>
+  <!-- tag -->
+  <div class="mt-12 pt-6 border-t border-gray-200">
+    
+      
+        <span class="bg-gray-100 dark:bg-gray-700 px-2 py-1 m-1 text-sm rounded-md transition-colors hover:bg-gray-200">
+          <a href="/tags/C/">C#</a>
+        </span>
+      
+        <span class="bg-gray-100 dark:bg-gray-700 px-2 py-1 m-1 text-sm rounded-md transition-colors hover:bg-gray-200">
+          <a href="/tags/Blazor/">Blazor</a>
+        </span>
+      
+        <span class="bg-gray-100 dark:bg-gray-700 px-2 py-1 m-1 text-sm rounded-md transition-colors hover:bg-gray-200">
+          <a href="/tags/NET/">.NET</a>
+        </span>
+      
+    
+  </div>
+  <!-- prev and next -->
+  <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+    <div>
+      
+        <a href="/2024/08/03/Python/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
+          <iconify-icon width="20" icon="ri:arrow-left-s-line" data-inline="false"></iconify-icon>
+          Python
+        </a>
+      
+    </div>
+    <div>
+      
+        <a href="/2024/06/10/AsyncCsharp/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
+          Async and await in C#
+          <iconify-icon width="20" icon="ri:arrow-right-s-line" data-inline="false"></iconify-icon>
+        </a>
+      
+    </div>
+  </div>
+  <!-- comment -->
+  <div class="article-comments mt-12">
+    
+
+  </div>
+</section>
+<!-- js inspect -->
+
+<script src="/lib/clipboard.min.js"></script>
+
+
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+  });
+</script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+  $(document).ready(() => {
+    const maraidConfig = {
+      theme: "default",
+      logLevel: 3,
+      flowchart: { curve: "linear" },
+      gantt: { axisFormat: "%m/%d/%Y" },
+      sequence: { actorMargin: 50 },
+    };
+    mermaid.initialize(maraidConfig);
+  });
+</script>
+
+
+
+<script src="/lib/fancybox/fancybox.umd.min.js"></script>
+
+<script>
+  $(document).ready(() => {
+    $('.post-content').each(function(i){
+      $(this).find('img').each(function(){
+        if ($(this).parent().hasClass('fancybox') || $(this).parent().is('a')) return;
+        var alt = this.alt;
+        if (alt) $(this).after('<span class="fancybox-alt">' + alt + '</span>');
+        $(this).wrap('<a class="fancybox-img" href="' + this.src + '" data-fancybox=\"gallery\" data-caption="' + alt + '"></a>')
+      });
+      $(this).find('.fancybox').each(function(){
+        $(this).attr('rel', 'article' + i);
+      });
+    });
+
+    Fancybox.bind('[data-fancybox="gallery"]', {
+        // options
+    })
+  })
+</script>
+
+<!-- tocbot begin -->
+
+<script src="/lib/tocbot/tocbot.min.js"></script>
+
+<script>
+  $(document).ready(() => {
+      tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '.post-toc',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.post-content',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: 'h1, h2, h3',
+        // For headings inside relative or absolute positioned containers within content.
+        hasInnerContainers: true,
+    });
+  })
+</script>
+<!-- tocbot end -->
+
+
+  </main>
+  <footer class="flex flex-col h-40 items-center justify-center text-gray-400 text-sm">
+  <!-- busuanzi -->
+  
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- Busuanzi Analytics -->
+<div class="flex items-center gap-2">
+  <span>Visitors</span>
+  <span id="busuanzi_value_site_uv"></span>
+  <span>Page Views</span>
+  <span id="busuanzi_value_site_pv"></span>
+</div>
+<!-- End Busuanzi Analytics -->
+
+
+  <!-- copyright -->
+  <div class="flex items-center gap-2">
+    <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color: inherit;">CC BY-NC-SA 4.0</a>
+    <span>© 2022</span>
+    <iconify-icon width="18" icon="emojione-monotone:maple-leaf" ></iconify-icon>
+    <a href="https://github.com/xbmlz" target="_blank" rel="noopener noreferrer">xbmlz</a>
+  </div>
+  <!-- powered by -->
+  <div class="flex items-center gap-2">
+    <span>Powered by</span>
+    <a href="https://hexo.io/" target="_blank" rel="noopener noreferrer">Hexo</a>
+    <span>&</span>
+    <a href="https://github.com/xbmlz/hexo-theme-maple" target="_blank" rel="noopener noreferrer">Maple</a>
+  </div>
+
+</footer>
+  <div class="back-to-top box-border fixed right-6 z-1024 -bottom-20 rounded py-1 px-1 bg-slate-900 opacity-60 text-white cursor-pointer text-center dark:bg-slate-600">
+    <span class="flex justify-center items-center text-sm">
+      <iconify-icon width="18" icon="ion:arrow-up-c" id="go-top"></iconify-icon>
+      <span id="scrollpercent"><span>0</span> %</span>
+    </span>
+  </div>
+  
+<script src="/js/main.js"></script>
+
+
+  <script>
+    $(document).ready(function () {
+      const mapleCount = "10";
+      const speed = "0.5";
+      const mapleEl = document.getElementById("maple");
+      const maples = Array.from({ length: mapleCount }).map(() => {
+        const maple = document.createElement("div");
+        const scale = Math.random() * 0.5 + 0.5;
+        const offset = Math.random() * 2 - 1;
+        const x = Math.random() * mapleEl.clientWidth;
+        const y = -Math.random() * mapleEl.clientHeight;
+        const duration = 10 / speed;
+        const delay = -duration;
+        maple.className = "maple";
+        maple.style.width = `${24 * scale}px`;
+        maple.style.height = `${24 * scale}px`;
+        maple.style.left = `${x}px`;
+        maple.style.top = `${y}px`;
+        maple.style.setProperty("--maple-fall-offset", offset);
+        maple.style.setProperty("--maple-fall-height", `${Math.abs(y) + mapleEl.clientHeight}px`);
+        maple.style.animation = `fall ${duration}s linear infinite`;
+        maple.style.animationDelay = `${delay}s`;
+        mapleEl.appendChild(maple)
+        return maple
+      })
+    });
+  </script>
+  
+
+
+  <div class="fixed top-0 bottom-0 left-0 right-0 pointer-events-none print:hidden" id="maple"></div>
+</body>
+
+</html>
